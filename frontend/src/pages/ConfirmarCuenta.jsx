@@ -1,7 +1,7 @@
 
-import { useEffect,useState } from "react";
+import { useEffect,useRef,useState } from "react";
 import {useParams,Link} from 'react-router-dom'
-import axios from 'axios';
+import clienteAxios from "../config/clienteAxios";
 import Alerta from '../components/Alerta'
 
 const ConfirmarCuenta = () => {
@@ -11,28 +11,38 @@ const ConfirmarCuenta = () => {
   const params = useParams();
   const {token:id} =params;
 
-  useEffect(()=>{
+  const firtMount = useRef(true)
+  useEffect(() => {
     const confirmarCuenta = async () => {
       try {
-     
-        const url = `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/confirmar/${id}`
-        const {data}= await axios(url);
-
+        const url = `/usuarios/confirmar/${id}`;
+        const { data } = await clienteAxios.get(url);
+  
         setAlerta({
           msg: data.msg,
-          error:false,
-        })
-
-        setCuentaConfirmada(true)
+          error: false,
+        });
+        setCuentaConfirmada(true);
       } catch (error) {
         setAlerta({
           msg: error.response.data.msg,
           error: true,
-        })
+        });
       }
     };
-    confirmarCuenta();
-  },[])
+  
+    if (firtMount.current){
+      setCuentaConfirmada(true);
+      firtMount.current = false
+    }
+  }, []); // Elimina cuentaConfirmada de las dependencias
+
+  
+  
+  
+  
+  
+  
 
   const {msg} = alerta;
   return (

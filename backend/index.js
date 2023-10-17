@@ -13,7 +13,7 @@ dotenv.config()
 conectarDB();
 
 // Configurar CORS
-const whileList =[process.env.FRONTEND_URL]
+const whileList =[process.env.FRONTEND_URL, process.env.BACKEND_URL]
 
 const corsOptions = {
     origin: function(origin,callback){
