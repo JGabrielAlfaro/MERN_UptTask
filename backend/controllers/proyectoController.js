@@ -18,6 +18,7 @@ const nuevoProyecto = async ( req,res ) => {
     try {
         const proyectoAlmacenado = await proyecto.save();
         res.json(proyectoAlmacenado)
+        // console.log(proyectoAlmacenado)
     } catch (error) {
         console.log(error)
     }

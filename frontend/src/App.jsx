@@ -11,6 +11,7 @@ import RutaProtegida from './layouts/RutaProtegida'
 import Proyectos from './pages/Proyectos'
 import Proyecto from './pages/Proyecto'
 import NuevoProyecto from './pages/NuevoProyecto'
+import EditarProyecto from './components/EditarProyecto'
 
 import {AuthProvider} from './context/AuthProvider'
 import {ProyectosProvider} from './context/ProyectosProvider'
@@ -32,10 +33,11 @@ function App() {
                             NuevoPassword
                         </Route>
                     {/* PRIVADA */}
-                    <Route path='/proyectos' element={<RutaProtegida/> } >
-                        <Route index element={<Proyectos />} />
-                        <Route path='crear-proyecto' element={<NuevoProyecto/>}/>
-                         <Route path=':id' element={<Proyecto/>}/> {/*El que tiene rauting dinamico debe estar en el final */}
+                    <Route path="/proyectos" element={<RutaProtegida/> } >
+                         <Route index element={<Proyectos />} />
+                         <Route path="crear-proyecto" element={<NuevoProyecto/>}/>
+                         <Route path=":id" element={<Proyecto/>}/> 
+                         <Route path="editar/:id" element={<EditarProyecto/>}/> 
                     </Route>
                 </Routes>
             </ProyectosProvider>

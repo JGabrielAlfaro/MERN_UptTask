@@ -43,35 +43,84 @@ const ProyectosProvider = ({children}) => {
     }
 
     const submitProyecto = async (proyecto) => {
-        try {
-           const token = localStorage.getItem('token')
-           if (!token)return
-
-           const config = {
-                headers: {
-                    "Content-type": "application/json",
-                    Authorization: `Bearer ${token}`
-                }
-           }
-           const {data} = await clienteAxios.post('/proyectos', proyecto,config)
-        //    console.log(data)
-
-        setProyectos([...proyectos,data]) // es como si estuvieramos consultando de nuevo a la base de datos.
-
-           setAlerta({
-             msg: "Proyecto creado correctamente",
-             error: false
-           })
-
-
-
-           setTimeout(()=>{
-            setAlerta({})
-            navigate('/proyectos')
-           },3000)
-        } catch (error) {
-            console.log(error)
+        //Si id es null, es nuevo, caso contrario es editar.
+        if (proyecto.id){
+            await editarProyecto(proyecto)
+        }else{
+            await nuevoProyecto(proyecto);
         }
+       
+
+    }
+
+    const editarProyecto = async(proyecto)=>{
+        try {
+            const token = localStorage.getItem('token')
+            if (!token)return
+ 
+            const config = {
+                 headers: {
+                     "Content-type": "application/json",
+                     Authorization: `Bearer ${token}`
+                 }
+            }
+            const {data} = await clienteAxios.put(`/proyectos/${proyecto.id}`, proyecto,config)
+            // console.log(data)
+ 
+            // Sincronizar el state
+            const proyectosActualizados = proyectos.map( p => p._id === data._id ? data : p )
+            // console.log(proyectosActualizados)
+            setProyectos(proyectosActualizados)
+            
+
+            setAlerta({
+                msg: "Proyecto actualizado correctamente",
+                error: false
+              })
+
+              setTimeout(()=>{
+               setAlerta({})
+               navigate('/proyectos')
+              },3000)
+
+
+         } catch (error) {
+             console.log(error)
+         }
+
+    }
+
+    const nuevoProyecto = async(proyecto)=>{
+        
+        try {
+            const token = localStorage.getItem('token')
+            if (!token)return
+ 
+            const config = {
+                 headers: {
+                     "Content-type": "application/json",
+                     Authorization: `Bearer ${token}`
+                 }
+            }
+            delete proyecto?.id //elimine el campo null y no retorne el valor en null de base de datos.
+            const {data} = await clienteAxios.post('/proyectos', proyecto,config)
+            //  console.log(data)
+            setProyectos( [...proyectos,data] ) // es como si estuvieramos consultando de nuevo a la base de datos.
+            // console.log(proyectos)
+
+            setAlerta({
+              msg: "Proyecto creado correctamente",
+              error: false
+            })
+ 
+            setTimeout(()=>{
+             setAlerta({})
+             navigate('/proyectos')
+            },3000)
+
+         } catch (error) {
+             console.log(error)
+         }
 
     }
 
@@ -98,6 +147,40 @@ const ProyectosProvider = ({children}) => {
        
     }
 
+    const eliminarProyecto = async (id) => {
+        try {
+            const token = localStorage.getItem('token')
+            if (!token)return
+
+            const config = {
+                headers: {
+                    "Content-type": "application/json",
+                    Authorization: `Bearer ${token}`
+                }
+            }
+            const {data} = await clienteAxios.delete(`/proyectos/${id}`,config)
+            //  console.log(data,{id})
+            //Sincronizar el state.
+            const proyectosActualizados = proyectos.filter( p => p._id !== id)
+            //  console.log(proyectosActualizados)
+
+             setProyectos(proyectosActualizados)
+
+            setAlerta({
+                msg: data.msg,
+                error:false
+            })
+
+            setTimeout(()=>{
+                setAlerta({})
+                navigate('/proyectos')
+               },3000)
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     return (
                 <ProyectosContext.Provider
                     value={{
@@ -107,7 +190,8 @@ const ProyectosProvider = ({children}) => {
                         submitProyecto,
                         obtenerProyecto,
                         proyecto,
-                        cargando
+                        cargando,
+                        eliminarProyecto
                     }}
                 > {children}
                 </ProyectosContext.Provider>
