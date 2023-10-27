@@ -39,7 +39,8 @@ const AuthProvider = ({children}) => {
                 //  console.log(pathname)
                  if (rutas.includes(pathname)) {
                     navigate("/proyectos")
-                  }else {
+                  }
+                  else {
                     navigate(pathname)
                   }
             } catch (error) {
