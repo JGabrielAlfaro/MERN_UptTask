@@ -27,7 +27,10 @@ const nuevoProyecto = async ( req,res ) => {
 
 const obtenerProyecto = async ( req,res ) => {
     const {id}= req.params;
-    const proyecto = await Proyecto.findById(id).populate('tareas')
+    const proyecto = await Proyecto.findById(id)
+    .populate('tareas')
+    .populate('colaboradores', "nombre email")
+
     if (!proyecto){
         const error = new Error("Proyecto No encontrado")
         return res.status(404).json({msg:error.message})
@@ -144,7 +147,26 @@ const agregarColaborador = async ( req,res ) => {
 };
 
 const eliminarColaborador = async ( req,res ) => {
-    
+     // console.log(req.params.id)
+     const proyecto = await Proyecto.findById (req.params.id);
+     if (!proyecto){
+         const error = new Error('Proyecto No encontrado')
+         res.status(404).json({msg: error.message})
+     }
+ 
+     //Validar que nadie cree colaborades en proyectos ajenos.
+     if (proyecto.creador.toString() !==req.usuario._id.toString()){
+         const error =new ("Acción no valida")
+         return res.status(404).json({msg: error.message})
+     }
+     
+         // Esta bien, se puede eliminar
+    proyecto.colaboradores.pull(req.body.id)
+    // console.log(proyecto)
+    // return
+    await proyecto.save()
+    res.json({msg:"Colaborador agregado correctamente"})
+
 };
 
 

@@ -14,6 +14,7 @@ const ProyectosProvider = ({children}) => {
     const [tarea,setTarea] = useState({})
     const [modalEliminarTarea, setModalEliminarTarea] = useState(false);
     const [colaborador,setColaborador] = useState({})
+    const [modalEliminarColaborador,setModalEliminarColaborador] = useState(false)
 
     const navigate = useNavigate();
     
@@ -363,6 +364,42 @@ const ProyectosProvider = ({children}) => {
            limpiarAlerta(3000)
         }
     }
+
+    const handleModalEliminarColaborador = (colaborador) => {
+        setModalEliminarColaborador(!modalEliminarColaborador)
+        setColaborador(colaborador)
+    }
+
+    const eliminarColaborador = async() =>{
+        try {
+            const token = localStorage.getItem('token')
+            if (!token)return
+
+            const config = {
+                headers: {
+                    "Content-type": "application/json",
+                    Authorization: `Bearer ${token}`
+                }
+            }
+            //Ya venia como objeto email, así que le quitamos {email} y lo pasamos como email
+            const {data} = await clienteAxios.post(`/proyectos/eliminar-colaborador/${proyecto._id}`, {id:colaborador._id}, config)
+
+            const proyectoActualizado = {...proyecto}
+            proyectoActualizado.colaboradores = proyectoActualizado.colaboradores.filter (c =>c._id !== colaborador._id)
+            setProyecto(proyectoActualizado)
+            setAlerta({
+                msg: data.msg,
+                error: false,
+            })
+            limpiarAlerta(3000)
+            setColaborador({})
+            setModalEliminarColaborador(false)
+           
+
+        } catch (error) {
+            console.log(error.response)
+        }
+    }
     return (
                 <ProyectosContext.Provider
                     value={{
@@ -384,7 +421,10 @@ const ProyectosProvider = ({children}) => {
                         eliminarTarea,
                         submitColaborador,
                         colaborador,
-                        agregarColaborador
+                        agregarColaborador,
+                        handleModalEliminarColaborador,
+                        modalEliminarColaborador,
+                        eliminarColaborador 
                     }}
                 > {children}
                 </ProyectosContext.Provider>
