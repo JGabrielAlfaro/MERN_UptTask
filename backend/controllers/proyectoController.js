@@ -4,7 +4,16 @@ import Tarea from '../models/Tarea.js';
 import Usuario from '../models/Usuario.js';
 
 const obtenerProyectos = async ( req,res ) => {
-    const proyectos = await Proyecto.find().where('creador').equals(req.usuario).select('-tareas');
+    const proyectos = await Proyecto.find({
+      '$or': [
+        {'colaboradores': {$in: req.usuario }}, 
+        {'creador': {$in: req.usuario }}, 
+      ] 
+    }).select('-tareas');
+
+    // .where('creador')
+    // .equals(req.usuario)
+    // .select('-tareas');
     res.json(proyectos)
 
 }
@@ -35,7 +44,8 @@ const obtenerProyecto = async ( req,res ) => {
         const error = new Error("Proyecto No encontrado")
         return res.status(404).json({msg:error.message})
     }
-    if (proyecto.creador.toString()!== req.usuario._id.toString()){
+    //Ser administrador o colaborador
+    if (proyecto.creador.toString()!== req.usuario._id.toString()  && !proyecto.colaboradores.some(c => c._id.toString() === req.usuario._id.toString()) ){
         const error = new Error("Acción no válida")
         return res.status(401).json({msg:error.message})
     }

@@ -1,11 +1,11 @@
 import { formatearFecha } from "../helpers/FormatearFecha";
 import useProyectos from "../hooks/useProyectos";
-
+import useAdmin from "../hooks/useAdmin";
 const Tarea = ({tarea}) => {
 
     const {descripcion,nombre,prioridad,estado,fechaEntrega,_id} = tarea;
-
-    const {handelModalEditarTarea,handleModalEliminarTarea} = useProyectos();
+    const {handelModalEditarTarea,handleModalEliminarTarea,completarTarea} = useProyectos();
+    const admin = useAdmin();
 
   return (
     <div className="border-b p-5 flex justify-between items-center">
@@ -17,38 +17,36 @@ const Tarea = ({tarea}) => {
         </div>
 
         <div className=" flex gap-2">
+            { admin && (
+                <button 
+                    className="bg-indigo-600 px-4 py-3 text-white uppercase font-bold text-sm rounded-lg"
+                    onClick={() => handelModalEditarTarea(tarea)}
+                >
+                    Editar
+                </button>
+            )}
+           
+
             <button 
-                className="bg-indigo-600 px-4 py-3 text-white uppercase font-bold text-sm rounded-lg"
-                onClick={() => handelModalEditarTarea(tarea)}
+                className={`${ estado ? 'bg-sky-600' : 'bg-gray-600'} px-4 py-3 text-white uppercase font-bold text-sm rounded-lg`}
+                 onClick={()=>completarTarea(_id)}
             >
-                Editar
+                {estado ? 'Completa' : 'Incompleta'}
             </button>
-            {
-                estado ? (
-                    <button 
-                        className="bg-sky-600 px-4 py-3 text-white uppercase font-bold text-sm rounded-lg"
-                    >
-                        Completa
-                    </button>
-                )
-                :(
-                    <button 
-                        className="bg-gray-600 px-4 py-3 text-white uppercase font-bold text-sm rounded-lg"
-                    >
-                        Incompleta
-                    </button>
-                )
-            }
            
 
 
+            {
+                admin && (
+                        <button 
+                            className="bg-red-600 px-4 py-3 text-white uppercase font-bold text-sm rounded-lg"
+                            onClick={()=>handleModalEliminarTarea(tarea)}
+                        >
+                            Eliminar
+                        </button>
 
-            <button 
-                className="bg-red-600 px-4 py-3 text-white uppercase font-bold text-sm rounded-lg"
-                onClick={()=>handleModalEliminarTarea(tarea)}
-            >
-                Eliminar
-            </button>
+                )
+            }
         </div>
     </div>
   )

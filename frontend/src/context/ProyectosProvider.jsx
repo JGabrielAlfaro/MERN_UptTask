@@ -144,11 +144,14 @@ const ProyectosProvider = ({children}) => {
             }
             const {data} = await clienteAxios.get(`/proyectos/${id}`,config)
             setProyecto(data)
+            setAlerta({})
        } catch (error) {
+          navigate('/proyectos')
           setAlerta({
             msg: error.response.data.msg,
             error:true
           })
+          limpiarAlerta(3000)
        }finally{
             setCargando(false)
        }
@@ -391,15 +394,41 @@ const ProyectosProvider = ({children}) => {
                 msg: data.msg,
                 error: false,
             })
-            limpiarAlerta(3000)
+            
             setColaborador({})
             setModalEliminarColaborador(false)
-           
+            limpiarAlerta(3000)
 
         } catch (error) {
             console.log(error.response)
         }
     }
+
+    const completarTarea = async (id) => {
+        try {
+            const token = localStorage.getItem('token')
+            if (!token)return
+
+            const config = {
+                headers: {
+                    "Content-type": "application/json",
+                    Authorization: `Bearer ${token}`
+                }
+            }
+            
+            const {data} = await clienteAxios.post(`/tareas/estado/${id}`,{}, config)
+            // console.log(data)
+            const proyectoActualizado = {...proyecto}
+            proyectoActualizado.tareas = proyectoActualizado.tareas.map(t => t._id === data._id ? data : t)
+            setProyecto(proyectoActualizado)
+            setTarea({})
+            setAlerta({})
+
+        } catch (error) {
+           console.log(error.response) 
+        }
+    }
+
     return (
                 <ProyectosContext.Provider
                     value={{
@@ -424,7 +453,8 @@ const ProyectosProvider = ({children}) => {
                         agregarColaborador,
                         handleModalEliminarColaborador,
                         modalEliminarColaborador,
-                        eliminarColaborador 
+                        eliminarColaborador,
+                        completarTarea
                     }}
                 > {children}
                 </ProyectosContext.Provider>
