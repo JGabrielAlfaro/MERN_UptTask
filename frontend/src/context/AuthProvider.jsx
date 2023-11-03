@@ -33,16 +33,22 @@ const AuthProvider = ({children}) => {
                 const {data} = await clienteAxios('/usuarios/perfil',config)
                 // console.log(data)
                 setAuth(data)
-                
-                  const rutas = ["/", "/registrar", "/olvide-password", "/confirmar","/proyectos"];
-                //  navigate(pathname)
-                //  console.log(pathname)
-                 if (rutas.includes(pathname)) {
-                    navigate("/proyectos")
-                  }
-                  else {
-                    navigate(pathname)
-                  }
+           
+                // setAuth(data)
+                if(data._id && location.pathname === '/') {
+                    navigate('/proyectos')
+                }
+                navigate(pathname)           
+                //    const rutas = ["/", "/registrar", "/olvide-password", "/confirmar","/proyectos"];
+ 
+                //  if (rutas.includes(pathname)) {
+                //     console.log(pathname,"paso1")
+                //     navigate("/proyectos")
+                //   }
+                //   else {
+                //     console.log(pathname,"paso2")
+                //     navigate(pathname)
+                //   }
             } catch (error) {
                setAuth({})
             }
