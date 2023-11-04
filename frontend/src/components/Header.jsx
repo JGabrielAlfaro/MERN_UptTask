@@ -12,12 +12,6 @@ const Header = () => {
             <h2 className="text-4xl text-sky-600 font-black text-center mb-5 md:mb-0">
                 Uptask
             </h2>
-
-            {/* <input 
-                type="search"
-                placeholder="Buscar Proyectos"
-                className="rounded-lg lg:w-96 block p-2 border"
-            /> */}
           
             <div className="flex flex-col md:flex-row items-center gap-4">
               <button
@@ -25,12 +19,14 @@ const Header = () => {
                 className="font-bold uppercase"
                 onClick={handleBuscador}
               >Buscar Proyecto</button>
+
                 <Link
                     to="/proyectos"
                     className="font-bold uppercase"
                 >
                     Proyectos
                 </Link>
+                
                 <button
                     type="button"
                     className="text-white text-sm bg-sky-600 p-3 rounded-md uppercase font-bold"

@@ -3,15 +3,17 @@ import { Combobox, Dialog, Transition } from '@headlessui/react'
 import { useNavigate } from 'react-router-dom'
 import useProyectos from '../hooks/useProyectos'
 
+
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
 const Busqueda = () => {
     const [ busqueda, setBusqueda] = useState('')
-    const {handleBuscador,buscador,proyectos} = useProyectos();
+    const {handleBuscador,buscador,proyectos,obtenerProyecto} = useProyectos();
     const navigate = useNavigate()
     const proyectosFiltrados = busqueda === '' ? [] : proyectos.filter(p => p.nombre.toLowerCase().includes(busqueda.toLowerCase()))
+
     return (
         <Transition.Root show={  buscador } as={Fragment} afterLeave={ ()=> setBusqueda('')  }>
             <Dialog as="div" className="fixed inset-0 z-10 overflow-y-auto mt-20 p-4 sm:p-20 md:p-20" onClose={handleBuscador }>
@@ -39,10 +41,15 @@ const Busqueda = () => {
                 <Combobox
                     as="div"
                     className="mx-auto max-w-xl transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all"
-                    // onChange={(proyecto) => (window.location = `/proyectos/${proyecto._id}`)}
-                    //  onChange={ (proyecto) => navigate(`/proyectos/${proyecto._id}`) }
+                    //  onChange={(proyecto) => (window.location = `/proyectos/${proyecto._id}`)}
+                        // onChange={ (p) => navigate(`/proyectos/${p._id}`) }
+     
                     onChange={(p) => {
+                        obtenerProyecto(p._id)
                         navigate(`/proyectos/${p._id}`)
+                        setBusqueda('')
+                        handleBuscador()
+                        // console.log(`/proyectos/${p._id}`)
                       }}
                 >
                     <div className="relative">

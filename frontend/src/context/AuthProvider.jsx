@@ -38,7 +38,8 @@ const AuthProvider = ({children}) => {
                 if(data._id && location.pathname === '/') {
                     navigate('/proyectos')
                 }
-                navigate(pathname)           
+                navigate(pathname) 
+                //  console.log(pathname)          
                 //    const rutas = ["/", "/registrar", "/olvide-password", "/confirmar","/proyectos"];
  
                 //  if (rutas.includes(pathname)) {

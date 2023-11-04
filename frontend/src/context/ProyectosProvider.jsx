@@ -432,6 +432,7 @@ const ProyectosProvider = ({children}) => {
 
     const handleBuscador = () => {
         setBuscador(!buscador)
+        // setProyecto({})
     }
 
     return (
