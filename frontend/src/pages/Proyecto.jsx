@@ -8,6 +8,8 @@ import ModalEliminarColaborador from '../components/ModalEliminarColaborador';
 import Tarea from '../components/Tarea';
 import Alerta from '../components/Alerta';
 import Colaborador from '../components/Colaborador';
+import io from 'socket.io-client'
+let socket;
 
 
 const Proyecto = () => {
@@ -15,23 +17,55 @@ const Proyecto = () => {
   // const [modal,setModal] = useState(false);
 
   const params = useParams();
-  const {obtenerProyecto,proyecto,cargando,handleModalTarea,alerta} = useProyectos();
+  const {obtenerProyecto,proyecto,cargando,handleModalTarea,alerta,submitTareasProyecto,eliminarTareaProyecto,actualizarTareaProyecto,cambiarEstadoTarea} = useProyectos();
   const admin = useAdmin()
 
   useEffect(() =>{
     obtenerProyecto(params.id)
   },[ ])
 
+  //Se ejecuta una vez para abrir la conexión del proyecto
+  useEffect(()=>{
+    socket = io(import.meta.env.VITE_BACKEND_URL)
+    socket.emit('abrir proyecto',params.id)
+  },[])
+
+  //Lo enviamos al que esta a la escucha
+  useEffect(()=>{
+    socket.on('tarea agregada', (tareaNueva)=>{
+      if (tareaNueva.proyecto === proyecto._id ){
+        submitTareasProyecto(tareaNueva)
+      }
+    })
+
+    socket.on ('tarea eliminada', (tareaEliminada)=>{
+      if (tareaEliminada.proyecto === proyecto._id ){
+        eliminarTareaProyecto(tareaEliminada)
+      }
+    })
+
+    socket.on('tarea actualizada',(tareaActualizada)=>{
+      if (tareaActualizada.proyecto._id === proyecto._id ){
+        actualizarTareaProyecto(tareaActualizada)
+      }
+    })
+
+    socket.on('nuevo estado',(nuevoEstadoTarea)=>{
+      if (nuevoEstadoTarea.proyecto._id === proyecto._id ){
+        actualizarTareaProyecto(nuevoEstadoTarea)
+      }
+    })
+
+
+
+
+  })
+
   const {nombre} = proyecto;
-
-
-  // console.log(proyecto)
 
   if (cargando) return 'Cargando ...'
 
   const {msg} = alerta;
-
-
 
   return (
 

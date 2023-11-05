@@ -2,12 +2,16 @@ import useProyectos from "../hooks/useProyectos"
 import PreviewProyecto from "../components/PreviewProyecto";
 import Alerta from '../components/Alerta';
 
+
+let socket;
+
 const Proyectos = () => {
 
   const {proyectos,alerta} = useProyectos();
-    // console.table(proyectos)
+      // console.table(proyectos)
 
-    const {msg} = alerta;
+  
+  const {msg} = alerta;
   return (
     <>
       <h1 className='text-4xl font-black'>Proyectos</h1>
